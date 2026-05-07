@@ -1,0 +1,173 @@
+.cart-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cart-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.item-info h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.item-info p {
+  margin: 4px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.item-price {
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.item-quantity button {
+  background: #f0f0f0;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.item-quantity button:hover {
+  background: #e0e0e0;
+}
+
+.item-quantity input {
+  width: 50px;
+  border: none;
+  text-align: center;
+  font-weight: bold;
+}
+
+.item-total {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+  text-align: right;
+  min-width: 100px;
+}
+
+.remove-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.remove-btn:hover {
+  background: #da190b;
+}
+
+.cart-summary {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: right;
+}
+
+.total {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.total strong {
+  color: #4CAF50;
+}
+
+.checkout-btn,
+.clear-btn {
+  margin-left: 10px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.checkout-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.checkout-btn:hover {
+  background: #45a049;
+}
+
+.clear-btn {
+  background: #ddd;
+  color: #333;
+}
+
+.clear-btn:hover {
+  background: #bbb;
+}
+
+@media (max-width: 768px) {
+  .cart-item {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .item-quantity,
+  .item-total,
+  .remove-btn {
+    width: 100%;
+  }
+
+  .checkout-btn,
+  .clear-btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+}
