@@ -11,7 +11,7 @@ public class BrandRepository(ElectronicStoreDbContext dbContext) : IBrandReposit
         await dbContext.Brands.AddAsync(entity);
     }
 
-    public async Task Delete(Guid id)
+    public async Task Delete(long id)
     {
         await dbContext.Brands
             .Where(b => b.Id == id)
@@ -25,7 +25,7 @@ public class BrandRepository(ElectronicStoreDbContext dbContext) : IBrandReposit
             .ToListAsync();
     }
 
-    public async Task<Brand?> GetById(Guid id)
+    public async Task<Brand?> GetById(long id)
     {
         return await dbContext.Brands
             .AsNoTracking()

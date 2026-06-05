@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ElectronicStore.Api/ElectronicStore.Api.csproj" />
+  <Project Path="ElectronicStore.Application/ElectronicStore.Application.csproj" Id="a9036c9f-08f1-4ad4-b7da-c1568c632754" />
   <Project Path="ElectronicStore.Domain/ElectronicStore.Domain.csproj" Id="18ef5b4d-1c99-4112-b563-25266e33f60a" />
-  <Project Path="ElectronocStore.Infrastructure/ElectronocStore.Infrastructure.csproj" Id="6c59bb1a-72da-45c7-9ded-1a8c9fc44dcd" />
+  <Project Path="ElectronicStore.Infrastructure/ElectronicStore.Infrastructure.csproj" />
 </Solution>

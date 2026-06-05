@@ -9,10 +9,9 @@ public class PurchaseRepository(ElectronicStoreDbContext dbContext) : IPurchaseR
     public async Task Create(Purchase entity)
     {
         await dbContext.Purchases.AddAsync(entity);
-        await dbContext.SaveChangesAsync();
     }
 
-    public async Task Delete(Guid id)
+    public async Task Delete(long id)
     {
         await dbContext.Purchases
             .Where(p => p.Id == id)
@@ -26,23 +25,29 @@ public class PurchaseRepository(ElectronicStoreDbContext dbContext) : IPurchaseR
             .ToListAsync();
     }
 
-    public async Task<Purchase?> GetById(Guid id)
+    public async Task<Purchase?> GetById(long id)
     {
         return await dbContext.Purchases
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<IReadOnlyCollection<Purchase>> GetByUserId(Guid userId)
+    public async Task<IReadOnlyCollection<Purchase>> GetByUserId(long userId)
     {
         return await dbContext.Purchases
             .AsNoTracking()
-            .Where(p => p.UserId == userId)
+            .Where(p => p.User.Id == userId)
             .ToListAsync();
     }
 
-    public Task Update(Purchase entity)
+    public async Task Update(Purchase entity)
     {
-        throw new NotImplementedException();
+        await dbContext.Purchases
+            .Where(p => p.Id == entity.Id)
+            .ExecuteUpdateAsync(p => p
+                .SetProperty(p => p.User, entity.User)
+                .SetProperty(p => p.DateTime, entity.DateTime)
+                .SetProperty(p => p.Items, entity.Items)
+            );
     }
 }

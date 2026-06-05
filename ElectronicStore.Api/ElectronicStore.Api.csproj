@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\ElectronicStore.Application\ElectronicStore.Application.csproj" />
+    <ProjectReference Include="..\ElectronicStore.Domain\ElectronicStore.Domain.csproj" />
+    <ProjectReference Include="..\ElectronicStore.Infrastructure\ElectronicStore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

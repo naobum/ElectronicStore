@@ -4,5 +4,5 @@ namespace ElectronicStore.Domain.Contracts.Repositories;
 
 public interface IPurchaseRepository : ICommonRepository<Purchase>
 {
-    Task<IReadOnlyCollection<Purchase>> GetByUserId(Guid userId);
+    Task<IReadOnlyCollection<Purchase>> GetByUserId(long userId);
 }
