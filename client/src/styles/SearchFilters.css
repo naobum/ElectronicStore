@@ -1,0 +1,26 @@
+.filters-panel {
+  background: #fff;
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(20, 20, 20, 0.04);
+}
+
+.filter-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.filter-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.filter-row input,
+.filter-row select {
+  border: 1px solid #d7d7d7;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
