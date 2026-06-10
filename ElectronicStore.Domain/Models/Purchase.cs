@@ -1,6 +1,6 @@
 ﻿namespace ElectronicStore.Domain.Models;
 
-public record Purchase
+public class Purchase
 {
     public long Id { get; init; }
 

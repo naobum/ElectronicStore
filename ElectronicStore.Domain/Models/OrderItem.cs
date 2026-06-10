@@ -4,13 +4,14 @@ namespace ElectronicStore.Domain.Models;
 
 public class OrderItem
 {
+    private OrderItem() { }
     public long Id { get; private set; }
     public int Amount { get; private set; }
     public decimal Price { get; private set; }
     public decimal UnitPrice { get; private set; }
 
     // навигационные свойства
-    public Product Product { get; private set; }
+    public Product? Product { get; private set; }
     public Cart? Cart { get; private set; }
     public Purchase? Purchase { get; private set; }
 

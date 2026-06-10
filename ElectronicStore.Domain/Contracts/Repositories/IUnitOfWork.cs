@@ -8,5 +8,5 @@ public interface IUnitOfWork
     /// <summary>
     /// Сохраняет все изменения в БД
     /// </summary>
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task SaveChanges(CancellationToken cancellationToken = default);
 }

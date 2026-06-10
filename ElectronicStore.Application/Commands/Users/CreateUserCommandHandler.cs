@@ -24,7 +24,7 @@ public class CreateUserCommandHandler(
             return result;
         }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChanges(cancellationToken);
 
         return Result.Created;
     }

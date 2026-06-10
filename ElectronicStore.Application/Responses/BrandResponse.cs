@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace ElectronicStore.Application.Responses;
 
-namespace ElectronicStore.Application.Responses
+public record BrandResponse
 {
-    internal class BrandResponse
-    {
-    }
+    public required string Name { get; init; }
+
+    public required string? Description { get; init; }
 }

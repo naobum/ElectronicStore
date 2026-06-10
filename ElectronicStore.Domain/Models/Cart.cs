@@ -4,8 +4,13 @@ namespace ElectronicStore.Domain.Models;
 
 public class Cart
 {
+
     private readonly List<OrderItem> _items;
+
+    public IReadOnlyCollection<OrderItem> Items => _items;
     public long Id { get; private set; }
+
+    public long UserId { get; private set; }
     public User? User { get; private set; }
 
     public Cart()

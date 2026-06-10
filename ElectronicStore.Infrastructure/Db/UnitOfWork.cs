@@ -17,7 +17,7 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     /// Сохраняет все изменения в БД
     /// </summary>
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    public async Task SaveChanges(CancellationToken cancellationToken = default)
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

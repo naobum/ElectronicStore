@@ -42,10 +42,12 @@ public class ProductRepository(ElectronicStoreDbContext dbContext) : IProductRep
             query = query.Where(p => p.Rating >= productFilter.MinRating);
         }
 
-        return await query.AsNoTracking().ToListAsync(cancellationToken);
+        return await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task Create(Product entity)
+    public async Task Create(Product entity, CancellationToken cancellationToken)
     {
         await dbContext.Products.AddAsync(entity);
     }

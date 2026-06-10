@@ -38,4 +38,21 @@ public class User
 
         return Result.Updated;
     }
+
+    public ErrorOr<Updated> DecreaseBalance(decimal amount)
+    {
+        if (amount <= 0)
+        {
+            return Result.Updated;
+        }
+
+        if (amount > Balance)
+        {
+            return Error.Conflict($"User {Id} does not have enough money");
+        }
+
+        Balance -= amount;
+
+        return Result.Updated;
+    }
 }

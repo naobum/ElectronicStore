@@ -35,7 +35,7 @@ public class RemoveCartItemCommandHandler(
 
         cart.RemoveItem(request.ProductId);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChanges(cancellationToken);
 
         return Result.Updated;
     }

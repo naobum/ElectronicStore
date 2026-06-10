@@ -30,7 +30,7 @@ public class AddCartItemCommandHandler(
 
         if (!result.IsError)
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
 
         return result;

@@ -1,3 +1,6 @@
 ﻿namespace ElectronicStore.Domain.Models;
 
-public record Brand(long Id, string Name, string? Description);
+public record Brand(string Name, string? Description)
+{
+    public long Id { get; private set; }
+}

@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace ElectronicStore.Application.Responses;
 
-namespace ElectronicStore.Application.Responses
+public record PurchaseResponse
 {
-    internal class PurchaseResponse
-    {
-    }
+    public required long UserId { get; init; }
+
+    public required DateTime DateTime { get; init; }
+
+    public required decimal TotalPrice { get; init; }
+
+    public required IReadOnlyCollection<OrderItemDto> Items { get; init; }
 }

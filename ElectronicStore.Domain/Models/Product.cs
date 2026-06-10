@@ -4,6 +4,9 @@ namespace ElectronicStore.Domain.Models;
 
 public class Product
 {
+    private Product()
+    {
+    }
     private Product(long brandId, string name, decimal price, int amount, string? description)
     {
         BrandId = brandId;
@@ -14,9 +17,9 @@ public class Product
         Rating = 0;
     }
 
-    public long Id { get; private set; }
-
-    public long BrandId;
+    public long Id { get; }
+    public long BrandId { get; }
+    public Brand? Brand { get; private set; }
     public string Name { get; private set; }
     public decimal Price { get; private set; }
     public int Amount { get; private set; }
@@ -98,5 +101,34 @@ public class Product
         }
 
         return true;
+    }
+
+    public ErrorOr<Updated> DecreaseAmount(int amount)
+    {
+        if (amount <= 0)
+        {
+            return Result.Updated;
+        }
+
+        if (amount > Amount)
+        {
+            return Error.Conflict($"There are not enough product {Id}");
+        }
+
+        Amount -= amount;
+
+        return Result.Updated;
+    }
+
+    public ErrorOr<Updated> AddAmount(int amount)
+    {
+        if (amount <= 0)
+        {
+            return Error.Validation("Amount must be greater than zero.");
+        }
+
+        Amount += amount;
+
+        return Result.Updated;
     }
 }

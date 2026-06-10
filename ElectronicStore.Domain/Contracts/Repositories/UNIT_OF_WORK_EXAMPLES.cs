@@ -29,7 +29,7 @@
  *         await _productRepository.Create(product.Value);
  *
  *         // Сохранение всех изменений в БД
- *         await _unitOfWork.SaveChangesAsync(cancellationToken);
+ *         await _unitOfWork.SaveChanges(cancellationToken);
  *
  *         return Result.Created;
  *     }
@@ -70,7 +70,7 @@
  *         if (!result.IsError)
  *         {
  *             // Сохраняем изменения одним вызовом
- *             await _unitOfWork.SaveChangesAsync(cancellationToken);
+ *             await _unitOfWork.SaveChanges(cancellationToken);
  *         }
  *
  *         return result;
@@ -102,7 +102,7 @@
  *         await _reviewRepository.Create(review.Value, cancellationToken);
  *
  *         // Сохраняем в БД
- *         await _unitOfWork.SaveChangesAsync(cancellationToken);
+ *         await _unitOfWork.SaveChanges(cancellationToken);
  *
  *         return Result.Created;
  *     }

@@ -25,7 +25,7 @@ public class TopUpUserBalanceCommandHandler(
             return result;
         }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChanges(cancellationToken);
 
         return Result.Updated;
     }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace ElectronicStore.Application.Responses;
 
-namespace ElectronicStore.Application.Responses
+internal class ReviewResponse
 {
-    internal class ReviewResponse
-    {
-    }
 }
