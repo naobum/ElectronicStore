@@ -36,6 +36,13 @@ public class BuyCommandHandler(
             return decreasingProductAmountResults.First(result => result.IsError).FirstError;
         }
 
+        var decreasingUserBalanceResult = user.DecreaseBalance(totalPrice);
+
+        if (decreasingUserBalanceResult.IsError)
+        {
+            return decreasingUserBalanceResult.FirstError;
+        }
+
         var purchase = new Purchase
         {
             DateTime = DateTime.UtcNow,
