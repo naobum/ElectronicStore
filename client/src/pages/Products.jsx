@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { productApi, brandApi } from '../services/api.js';
+import { productApi, brandApi, purchaseApi } from '../services/api.js';
 import { useCart } from '../context/CartContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import SearchFilters from '../components/SearchFilters.jsx';
@@ -13,15 +13,21 @@ export default function Products() {
   const [minRating, setMinRating] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [latestPurchases, setLatestPurchases] = useState([]);
   const { addToCart } = useCart();
 
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
-        const [productsData, brandsData] = await Promise.all([productApi.getAll(), brandApi.getAll()]);
+        const [productsData, brandsData, purchasesData] = await Promise.all([
+          productApi.getAll(),
+          brandApi.getAll(),
+          purchaseApi.getLatest(5),
+        ]);
         setProducts(productsData);
         setBrands(brandsData);
+        setLatestPurchases(purchasesData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -54,6 +60,22 @@ export default function Products() {
         onMinRatingChange={setMinRating}
         brands={brands}
       />
+      <section className="recent-purchases-card">
+        <h2>Последние покупки</h2>
+        {latestPurchases.length === 0 ? (
+          <p>Пока покупок нет.</p>
+        ) : (
+          <ul className="recent-purchases-list">
+            {latestPurchases.map((purchase, index) => (
+              <li key={`${purchase.userId}-${purchase.dateTime}-${index}`}>
+                <strong>Покупка #{index + 1}</strong>
+                <span>{new Date(purchase.dateTime).toLocaleString('ru-RU')}</span>
+                <span>Сумма: {Number(purchase.totalPrice).toFixed(2)} ₽</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       {loading ? (
         <div className="loading">Загрузка товаров...</div>
       ) : filteredProducts.length === 0 ? (

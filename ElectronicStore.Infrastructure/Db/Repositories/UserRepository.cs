@@ -20,13 +20,20 @@ public class UserRepository(ElectronicStoreDbContext dbContext) : IUserRepositor
 
     public async Task<User?> GetUserById(long id, CancellationToken cancellationToken)
     {
-        return await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        return await dbContext.Users
+            .Include(u => u.Cart!)
+            .ThenInclude(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
     public async Task<IReadOnlyCollection<User>> GetUsers(CancellationToken cancellationToken)
     {
         return await dbContext.Users
             .AsNoTracking()
-            .ToListAsync();
+            .Include(u => u.Cart!)
+            .ThenInclude(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .ToListAsync(cancellationToken);
     }
 }

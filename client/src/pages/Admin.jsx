@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { productApi, brandApi, userApi, reviewApi } from '../services/api.js';
+import { productApi, brandApi, userApi } from '../services/api.js';
 import ProductForm from '../components/ProductForm.jsx';
 import BrandForm from '../components/BrandForm.jsx';
 import '../styles/Admin.css';
@@ -9,11 +9,11 @@ export default function Admin() {
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [users, setUsers] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
+  const [newUserName, setNewUserName] = useState('');
 
   useEffect(() => {
     fetchAllData();
@@ -22,16 +22,14 @@ export default function Admin() {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [productsData, brandsData, usersData, reviewsData] = await Promise.all([
+      const [productsData, brandsData, usersData] = await Promise.all([
         productApi.getAll(),
         brandApi.getAll(),
         userApi.getAll(),
-        reviewApi.getAll(),
       ]);
       setProducts(productsData);
       setBrands(brandsData);
       setUsers(usersData);
-      setReviews(reviewsData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -59,6 +57,8 @@ export default function Admin() {
     }
   };
 
+  const [topUpAmounts, setTopUpAmounts] = useState({});
+
   const handleDeleteUser = async (id) => {
     if (!confirm('Удалить пользователя?')) return;
     try {
@@ -69,11 +69,39 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteReview = async (id) => {
-    if (!confirm('Удалить отзыв?')) return;
+  const handleCreateUser = async () => {
+    const name = newUserName.trim();
+    if (!name) {
+      alert('Введите имя аккаунта');
+      return;
+    }
+
     try {
-      await reviewApi.delete(id);
-      setReviews((items) => items.filter((item) => item.id !== id));
+      const created = await userApi.create({ name });
+      setUsers((items) => [...items, created]);
+      setNewUserName('');
+      alert('Аккаунт создан');
+    } catch (err) {
+      alert('Ошибка: ' + err.message);
+    }
+  };
+
+  const handleTopUp = async (userId) => {
+    const amount = Number(topUpAmounts[userId]);
+    if (!amount || amount <= 0) {
+      alert('Введите корректную сумму пополнения');
+      return;
+    }
+
+    try {
+      await userApi.topUp(userId, amount);
+      setUsers((items) =>
+        items.map((item) =>
+          item.id === userId ? { ...item, balance: Number(item.balance) + amount } : item
+        )
+      );
+      setTopUpAmounts((items) => ({ ...items, [userId]: '' }));
+      alert(`Баланс пополнен на ${amount} ₽`);
     } catch (err) {
       alert('Ошибка: ' + err.message);
     }
@@ -124,9 +152,6 @@ export default function Admin() {
         </button>
         <button className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
           Пользователи
-        </button>
-        <button className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
-          Отзывы
         </button>
       </div>
 
@@ -225,6 +250,18 @@ export default function Admin() {
         {activeTab === 'users' && (
           <div>
             <h2>Пользователи</h2>
+            <div className="panel-card">
+              <h3>Создать аккаунт</h3>
+              <div className="form-row">
+                <input
+                  type="text"
+                  value={newUserName}
+                  onChange={(event) => setNewUserName(event.target.value)}
+                  placeholder="Имя пользователя"
+                />
+                <button className="primary-btn" onClick={handleCreateUser}>Создать</button>
+              </div>
+            </div>
             <div className="items-list">
               {users.length === 0 ? (
                 <p>Пользователи не найдены.</p>
@@ -235,6 +272,7 @@ export default function Admin() {
                       <th>Имя</th>
                       <th>Email</th>
                       <th>Баланс</th>
+                      <th>Пополнение</th>
                       <th>Действия</th>
                     </tr>
                   </thead>
@@ -243,45 +281,26 @@ export default function Admin() {
                       <tr key={user.id}>
                         <td>{user.name}</td>
                         <td>{user.email}</td>
-                        <td>{user.balance}</td>
-                        <td className="actions">
-                          <button className="delete-btn" onClick={() => handleDeleteUser(user.id)}>
-                            Удалить
+                        <td>{user.balance} ₽</td>
+                        <td>
+                          <input
+                            type="number"
+                            min="1"
+                            value={topUpAmounts[user.id] ?? ''}
+                            onChange={(event) =>
+                              setTopUpAmounts((state) => ({
+                                ...state,
+                                [user.id]: event.target.value,
+                              }))
+                            }
+                            placeholder="Сумма"
+                          />
+                          <button className="primary-btn" onClick={() => handleTopUp(user.id)}>
+                            Пополнить
                           </button>
                         </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'reviews' && (
-          <div>
-            <h2>Отзывы</h2>
-            <div className="items-list">
-              {reviews.length === 0 ? (
-                <p>Отзывы не найдены.</p>
-              ) : (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Пользователь</th>
-                      <th>Текст</th>
-                      <th>Оценка</th>
-                      <th>Действия</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reviews.map((review) => (
-                      <tr key={review.id}>
-                        <td>{review.userName || 'Пользователь'}</td>
-                        <td>{review.text || '-'}</td>
-                        <td>{review.rating ?? '-'}</td>
                         <td className="actions">
-                          <button className="delete-btn" onClick={() => handleDeleteReview(review.id)}>
+                          <button className="delete-btn" onClick={() => handleDeleteUser(user.id)}>
                             Удалить
                           </button>
                         </td>

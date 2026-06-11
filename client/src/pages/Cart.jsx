@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCart } from '../context/CartContext.jsx';
 import '../styles/Cart.css';
 
 export default function Cart() {
-  const { cartItems, updateQuantity, removeFromCart, clearCart, totalPrice } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, clearCart, totalPrice, buyCart } = useCart();
+  const [buying, setBuying] = useState(false);
 
   const hasItems = cartItems.length > 0;
 
@@ -11,6 +12,18 @@ export default function Cart() {
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
     [cartItems]
   );
+
+  const handleBuy = async () => {
+    try {
+      setBuying(true);
+      await buyCart(1);
+      alert('Покупка оформлена успешно');
+    } catch (err) {
+      alert('Ошибка покупки: ' + err.message);
+    } finally {
+      setBuying(false);
+    }
+  };
 
   return (
     <div className="page-shell">
@@ -44,7 +57,12 @@ export default function Cart() {
           <div className="cart-summary">
             <div className="cart-summary-row">Всего товаров: {totalCount}</div>
             <div className="cart-summary-row">Итого: {totalPrice.toFixed(2)} ₽</div>
-            <button className="primary-btn" onClick={clearCart}>
+            <div className="cart-summary-row">Аккаунт: user (демо)</div>
+            <div className="cart-summary-row">Баланс не учитывается при покупке.</div>
+            <button className="primary-btn" onClick={handleBuy} disabled={buying}>
+              {buying ? 'Оформляем...' : 'Купить'}
+            </button>
+            <button className="secondary-btn" onClick={clearCart}>
               Очистить корзину
             </button>
           </div>

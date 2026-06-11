@@ -14,7 +14,7 @@ namespace ElectronicStore.Api.Controllers;
 [Route("/api/v1/products")]
 public class ProductController : ControllerBase
 {
-    [HttpGet("{productId:long}")]
+    [HttpGet("{productId:int}")]
     public async Task<IActionResult> GetProductById(
         [FromRoute] long productId,
         [FromServices] IRequestHandler<GetProductByIdQuery, ErrorOr<ProductResponse>> handler,
@@ -79,8 +79,19 @@ public class ProductController : ControllerBase
         [FromServices] IRequestHandler<UpdateProductInfoCommand, ErrorOr<Updated>> handler,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(request.ToCommand(), cancellationToken);
+        var result = await handler.Handle(request.ToCommand(productId), cancellationToken);
 
         return this.ToActionResult(result, ErrorMessages.FailedToUpdateProduct);
+    }
+
+    [HttpDelete("{productId:int}")]
+    public async Task<IActionResult> DeleteProduct(
+        [FromRoute] long productId,
+        [FromServices] IRequestHandler<DeleteProductCommand, ErrorOr<Deleted>> handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.Handle(new DeleteProductCommand(productId), cancellationToken);
+
+        return this.ToActionResult(result, ErrorMessages.FailedToDeleteProduct);
     }
 }

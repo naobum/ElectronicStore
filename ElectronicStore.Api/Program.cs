@@ -19,12 +19,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendDevPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173", "http://localhost:5174")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 // Command handlers
 builder.Services.AddScoped<IRequestHandler<CreateBrandCommand, Created>, CreateBrandCommandHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateBrandCommand, ErrorOr<Updated>>, UpdateBrandCommandHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteBrandCommand, ErrorOr<Deleted>>, DeleteBrandCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<AddCartItemCommand, ErrorOr<Updated>>, AddCartItemCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<BuyCommand, ErrorOr<Success>>, BuyCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<ClearCartCommand, ErrorOr<Updated>>, ClearCartCommandHandler>();
@@ -32,6 +45,7 @@ builder.Services.AddScoped<IRequestHandler<RemoveCartItemCommand, ErrorOr<Update
 builder.Services.AddScoped<IRequestHandler<AddProductAmountCommand, ErrorOr<Updated>>, AddProductAmountCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateProductCommand, ErrorOr<Created>>, CreateProductCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<UpdateProductInfoCommand, ErrorOr<Updated>>, UpdateProductInfoCommandHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteProductCommand, ErrorOr<Deleted>>, DeleteProductCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateReviewCommand, ErrorOr<Created>>, CreateReviewCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateUserCommand, ErrorOr<Created>>, CreateUserCommandHandler>();
 builder.Services.AddScoped<IRequestHandler<DeleteUserCommand, ErrorOr<Deleted>>, DeleteUserCommandHandler>();
@@ -43,6 +57,7 @@ builder.Services.AddScoped<IRequestHandler<GetBrandsQuery, IReadOnlyCollection<B
 builder.Services.AddScoped<IRequestHandler<GetProductByIdQuery, ErrorOr<ProductResponse>>, GetProductByIdQueryHandler>();
 builder.Services.AddScoped<IRequestHandler<SearchProductsQuery, IReadOnlyCollection<ProductResponse>>, SearchProductQueryHandler>();
 builder.Services.AddScoped<IRequestHandler<GetPurchasesByUserIdQuery, IReadOnlyCollection<PurchaseResponse>>, GetPurchasesByUserIdQueryHandler>();
+builder.Services.AddScoped<IRequestHandler<GetLatestPurchasesQuery, IReadOnlyCollection<PurchaseResponse>>, GetLatestPurchasesQueryHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAllUsersQuery, IReadOnlyCollection<UserResponse>>, GetAllUsersQueryHandler>();
 builder.Services.AddScoped<IRequestHandler<GetUserByIdQuery, ErrorOr<UserResponse>>, GetUserByIdQueryHandler>();
 
@@ -75,7 +90,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("FrontendDevPolicy");
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 

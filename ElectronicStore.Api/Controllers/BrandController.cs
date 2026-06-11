@@ -35,7 +35,30 @@ public class BrandController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{brandId: long}")]
+    [HttpPut("{brandId:long}")]
+    public async Task<IActionResult> UpdateBrand(
+        [FromRoute] long brandId,
+        [FromBody] CreateBrandRequest request,
+        [FromServices] IRequestHandler<UpdateBrandCommand, ErrorOr<Updated>> handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.Handle(new UpdateBrandCommand(brandId, request.Name, request.Description), cancellationToken);
+
+        return this.ToActionResult(result, ErrorMessages.FailedToUpdateBrand);
+    }
+
+    [HttpDelete("{brandId:long}")]
+    public async Task<IActionResult> DeleteBrand(
+        [FromRoute] long brandId,
+        [FromServices] IRequestHandler<DeleteBrandCommand, ErrorOr<Deleted>> handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.Handle(new DeleteBrandCommand(brandId), cancellationToken);
+
+        return this.ToActionResult(result, ErrorMessages.FailedToDeleteBrand);
+    }
+
+    [HttpGet("{brandId:long}")]
     public async Task<ActionResult<BrandResponse>> GetBrandById(
         [FromRoute] long brandId,
         [FromServices] IRequestHandler<GetBrandByIdQuery, ErrorOr<BrandResponse>> handler,

@@ -24,6 +24,16 @@ public class CreateProductCommandHandler(
             return creationResult.FirstError;
         }
 
+        if (request.Rating is not null)
+        {
+            var ratingResult = creationResult.Value.UpdateRating(request.Rating.Value);
+
+            if (ratingResult.IsError)
+            {
+                return ratingResult.FirstError;
+            }
+        }
+
         await productRepository.Create(creationResult.Value, cancellationToken);
 
         await unitOfWork.SaveChanges(cancellationToken);

@@ -19,6 +19,10 @@ public static class ErrorMessages
     public const string FailedToCreateProduct = "Failed to create product";
     public const string FailedToAddProductAmount = "Failed to add product amount";
     public const string FailedToUpdateProduct = "Failed to update product";
+    public const string FailedToDeleteProduct = "Failed to delete product";
+
+    public const string FailedToUpdateBrand = "Failed to update brand";
+    public const string FailedToDeleteBrand = "Failed to delete brand";
 
     public const string FailedToCreateReview = "Failed to create review";
 }

@@ -11,15 +11,19 @@ public static class Mappings
             request.Name,
             request.Price,
             request.Amount,
-            request.Description);
+            request.Description,
+            request.Rating);
     }
 
-    public static UpdateProductInfoCommand ToCommand(this UpdateProductInfoRequest request)
+    public static UpdateProductInfoCommand ToCommand(this UpdateProductInfoRequest request, long productId)
     {
         return new UpdateProductInfoCommand(
-            request.ProductId,
+            productId,
             request.Price,
+            request.BrandId,
             request.Name,
-            request.Description);
+            request.Description,
+            request.Rating,
+            request.Amount);
     }
 }

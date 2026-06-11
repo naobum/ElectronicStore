@@ -9,7 +9,6 @@ public class ProductRepository(ElectronicStoreDbContext dbContext) : IProductRep
     public async Task<Product?> GetProductById(long id, CancellationToken cancellationToken)
     {
         return await dbContext.Products
-            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
@@ -54,8 +53,8 @@ public class ProductRepository(ElectronicStoreDbContext dbContext) : IProductRep
 
     public async Task Delete(long id)
     {
-        await dbContext.Users
-            .Where(u => u.Id == id)
+        await dbContext.Products
+            .Where(p => p.Id == id)
             .ExecuteDeleteAsync();
     }
 
@@ -81,6 +80,8 @@ public class ProductRepository(ElectronicStoreDbContext dbContext) : IProductRep
                 .SetProperty(p => p.Name, entity.Name)
                 .SetProperty(p => p.BrandId, entity.BrandId)
                 .SetProperty(p => p.Description, entity.Description)
+                .SetProperty(p => p.Price, entity.Price)
+                .SetProperty(p => p.Amount, entity.Amount)
                 .SetProperty(p => p.Rating, entity.Rating)
             );
     }

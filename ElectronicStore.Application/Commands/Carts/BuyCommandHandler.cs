@@ -7,6 +7,7 @@ namespace ElectronicStore.Application.Commands.Carts;
 
 public class BuyCommandHandler(
     IUserRepository userRepository,
+    IPurchaseRepository purchaseRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<BuyCommand, ErrorOr<Success>>
 {
@@ -28,14 +29,7 @@ public class BuyCommandHandler(
 
         var totalPrice = orderItems.Sum(item => item.Price);
 
-        var decreasingUserBalanceResult = user.DecreaseBalance(totalPrice);
-
         var decreasingProductAmountResults = orderItems.Select(item => item.Product.DecreaseAmount(item.Amount));
-
-        if (decreasingUserBalanceResult.IsError)
-        {
-            return decreasingUserBalanceResult.FirstError;
-        }
 
         if (decreasingProductAmountResults.Any(result => result.IsError))
         {
@@ -45,14 +39,16 @@ public class BuyCommandHandler(
         var purchase = new Purchase
         {
             DateTime = DateTime.UtcNow,
-            Items = orderItems,
+            Items = orderItems.ToArray(),
             TotalPrice = totalPrice,
             User = user
         };
 
+        await purchaseRepository.Create(purchase);
+
         user.Cart.Clear();
 
-        await unitOfWork.SaveChanges();
+        await unitOfWork.SaveChanges(cancellationToken);
 
         return Result.Success;
     }

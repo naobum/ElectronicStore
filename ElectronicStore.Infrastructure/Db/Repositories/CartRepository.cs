@@ -13,6 +13,10 @@ public class CartRepository(ElectronicStoreDbContext dbContext) : ICartRepositor
 
     public async Task<Cart?> GetCartByUserId(long userId, CancellationToken cancellationToken)
     {
-        return await dbContext.Carts.FirstOrDefaultAsync(c => c.User.Id == userId, cancellationToken);
+        return await dbContext.Carts
+            .Include(c => c.User)
+            .Include(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(c => c.UserId == userId, cancellationToken);
     }
 }

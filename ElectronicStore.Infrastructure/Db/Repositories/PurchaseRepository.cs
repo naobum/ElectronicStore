@@ -22,6 +22,9 @@ public class PurchaseRepository(ElectronicStoreDbContext dbContext) : IPurchaseR
     {
         return await dbContext.Purchases
             .AsNoTracking()
+            .Include(p => p.User)
+            .Include(p => p.Items)
+            .ThenInclude(i => i.Product)
             .ToListAsync();
     }
 
@@ -36,7 +39,10 @@ public class PurchaseRepository(ElectronicStoreDbContext dbContext) : IPurchaseR
     {
         return await dbContext.Purchases
             .AsNoTracking()
-            .Where(p => p.User.Id == userId)
+            .Where(p => p.User != null && p.User.Id == userId)
+            .Include(p => p.User)
+            .Include(p => p.Items)
+            .ThenInclude(i => i.Product)
             .ToListAsync();
     }
 

@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react';
+import { cartApi } from '../services/api.js';
 
 const CartContext = createContext(null);
 
@@ -33,6 +34,19 @@ export function CartProvider({ children }) {
 
   const clearCart = () => setCartItems([]);
 
+  const buyCart = async (userId) => {
+    if (!cartItems.length) {
+      throw new Error('Корзина пуста');
+    }
+
+    for (const item of cartItems) {
+      await cartApi.addItem(userId, item.id, item.quantity);
+    }
+
+    await cartApi.buy(userId);
+    clearCart();
+  };
+
   const totalPrice = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cartItems]
@@ -40,7 +54,7 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, totalPrice }}
+      value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, buyCart, totalPrice }}
     >
       {children}
     </CartContext.Provider>

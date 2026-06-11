@@ -16,5 +16,8 @@ public record CreateProductRequest
     [Required]
     public decimal Price { get; init; }
 
+    [Range(0, 5)]
+    public double? Rating { get; init; }
+
     public string? Description { get; init; }
 }

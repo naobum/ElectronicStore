@@ -8,5 +8,6 @@ public record CreateProductCommand(
     string Name,
     decimal Price,
     int Amount,
-    string? Description
+    string? Description,
+    double? Rating = null
 ) : IRequest<ErrorOr<Created>>;

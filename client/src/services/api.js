@@ -2,12 +2,27 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5190
 
 const fetchJson = async (url, options = {}) => {
   const response = await fetch(url, options);
+
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || `Request failed: ${response.status}`);
   }
-  if (response.status === 204) return null;
-  return response.json();
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 };
 
 export const productApi = {
@@ -19,7 +34,7 @@ export const productApi = {
     body: JSON.stringify(product),
   }),
   update: async (id, product) => fetchJson(`${API_BASE_URL}/products/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(product),
   }),
@@ -55,15 +70,34 @@ export const userApi = {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(user),
   }),
+  topUp: async (id, amount) => fetchJson(`${API_BASE_URL}/users/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ money: amount }),
+  }),
   delete: async (id) => fetchJson(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' }),
 };
 
 export const reviewApi = {
-  getAll: async () => fetchJson(`${API_BASE_URL}/reviews`),
-  create: async (review) => fetchJson(`${API_BASE_URL}/reviews`, {
+  create: async (userId, productId, review) => fetchJson(`${API_BASE_URL}/users/${userId}/add-review/${productId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(review),
   }),
-  delete: async (id) => fetchJson(`${API_BASE_URL}/reviews/${id}`, { method: 'DELETE' }),
+};
+
+export const cartApi = {
+  addItem: async (userId, productId, quantity) => fetchJson(`${API_BASE_URL}/users/${userId}/cart/add-item`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId, amount: quantity }),
+  }),
+  buy: async (userId) => fetchJson(`${API_BASE_URL}/users/${userId}/cart/buy`, {
+    method: 'POST',
+  }),
+};
+
+export const purchaseApi = {
+  getByUser: async (userId) => fetchJson(`${API_BASE_URL}/user/${userId}/purchases`),
+  getLatest: async (count = 6) => fetchJson(`${API_BASE_URL}/purchases/latest?count=${count}`),
 };

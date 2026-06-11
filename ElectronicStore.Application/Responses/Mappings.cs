@@ -6,16 +6,20 @@ public static class Mappings
 {
     public static UserResponse ToResponse(this User user)
     {
-        return new UserResponse(user.Id, user.Name, user.Balance, user.Cart.ToDto());
+        return new UserResponse(user.Id, user.Name, user.Balance, user.Cart?.ToDto() ?? new CartDto
+        {
+            Items = Array.Empty<OrderItemDto>()
+        });
     }
 
-    public static CartDto ToDto(this Cart cart)
+    public static CartDto ToDto(this Cart? cart)
     {
         return new CartDto
         {
-            Items = cart.GetItems()
+            Items = cart?.GetItems()
                 .Select(orderItem => orderItem.ToDto())
                 .ToArray()
+                ?? Array.Empty<OrderItemDto>()
         };
     }
 
@@ -24,8 +28,8 @@ public static class Mappings
         return new OrderItemDto
         {
             Amount = orderItem.Amount,
-            ProductId = orderItem.Product.Id,
-            ProductName = orderItem.Product.Name,
+            ProductId = orderItem.Product?.Id ?? 0,
+            ProductName = orderItem.Product?.Name ?? "Unknown product",
             TotalPrice = orderItem.Price,
             UnitPrice = orderItem.UnitPrice
         };
@@ -35,10 +39,10 @@ public static class Mappings
     {
         return new PurchaseResponse
         {
-            UserId = purchase.User.Id,
+            UserId = purchase.User?.Id ?? 0,
             DateTime = purchase.DateTime,
             TotalPrice = purchase.TotalPrice,
-            Items = purchase.Items
+            Items = (purchase.Items ?? Array.Empty<OrderItem>())
                 .Select(item => item.ToDto())
                 .ToArray()
         };
@@ -48,6 +52,7 @@ public static class Mappings
     {
         return new BrandResponse
         {
+            Id = brand.Id,
             Name = brand.Name,
             Description = brand.Description
         };

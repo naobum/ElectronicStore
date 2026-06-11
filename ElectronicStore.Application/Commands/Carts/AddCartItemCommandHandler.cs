@@ -7,6 +7,7 @@ namespace ElectronicStore.Application.Commands.Carts;
 public class AddCartItemCommandHandler(
     ICartRepository cartRepository,
     IProductRepository productRepository,
+    IUserRepository userRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<AddCartItemCommand, ErrorOr<Updated>>
 {
@@ -16,7 +17,22 @@ public class AddCartItemCommandHandler(
 
         if (cart == null)
         {
-            return Error.NotFound($"Not found cart for user {request.UserId}");
+            var user = await userRepository.GetUserById(request.UserId, cancellationToken);
+
+            if (user == null)
+            {
+                return Error.NotFound($"Not found user {request.UserId}");
+            }
+
+            cart = new Domain.Models.Cart();
+            var cartCreationResult = user.SetCart(cart);
+
+            if (cartCreationResult.IsError)
+            {
+                return cartCreationResult.FirstError;
+            }
+
+            await cartRepository.CreateCart(cart, cancellationToken);
         }
 
         var product = await productRepository.GetProductById(request.ProductId, cancellationToken);

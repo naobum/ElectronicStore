@@ -9,8 +9,7 @@ namespace ElectronicStore.Api.Controllers;
 [Route("/api/v1")]
 public class PurchaseController : ControllerBase
 {
-
-    [HttpGet("user/{userId:long}/purchases")]
+    [HttpGet("user/{userId:int}/purchases")]
     public async Task<ActionResult<IReadOnlyCollection<PurchaseResponse>>> GetPurchasesByUser(
         [FromRoute] long userId,
         [FromServices] IRequestHandler<GetPurchasesByUserIdQuery, IReadOnlyCollection<PurchaseResponse>> handler,
@@ -21,4 +20,14 @@ public class PurchaseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("purchases/latest")]
+    public async Task<ActionResult<IReadOnlyCollection<PurchaseResponse>>> GetLatestPurchases(
+        [FromServices] IRequestHandler<GetLatestPurchasesQuery, IReadOnlyCollection<PurchaseResponse>> handler,
+        [FromQuery] int count = 6,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await handler.Handle(new GetLatestPurchasesQuery(count), cancellationToken);
+
+        return Ok(result);
+    }
 }
