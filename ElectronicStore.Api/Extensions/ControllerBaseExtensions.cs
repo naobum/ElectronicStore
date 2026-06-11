@@ -14,7 +14,7 @@ public static class ControllerBaseExtensions
             { Value: null } => controller.NotFound(),
             { Value: Created } => controller.Created(),
             { Value: Updated or Deleted } => controller.NoContent(),
-            { Value: _ } => controller.Ok()
+            { Value: _ } => controller.Ok(result.Value)
         };
     }
 
